@@ -16,6 +16,8 @@ import {
 import type { Request, Response } from 'express';
 import { UserService } from './user.service';
 import { User } from 'generated/prisma/client';
+import { Logger } from 'winston';
+import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
 @Controller('/api/users')
 export class UserController {
@@ -25,7 +27,10 @@ export class UserController {
     private mailService: MailService,
     @Inject('EmailService') private emailService: MailService,
     private userRepository: UserRepository,
-  ) {}
+    @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
+  ) {
+    this.logger.info('Create User Controller');
+  }
 
   @Get('/connection')
   getConnection(): string {
@@ -39,6 +44,9 @@ export class UserController {
     @Query('first_name') firstName: string,
     @Query('last_name') lastName: string,
   ): Promise<User> {
+    this.logger.info(
+      `Create user with first name: ${firstName} and last name: ${lastName}`,
+    );
     return this.userRepository.save(firstName, lastName);
   }
 
