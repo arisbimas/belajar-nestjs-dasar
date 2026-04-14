@@ -1,4 +1,3 @@
-import { PrismaModule } from './../prisma/prisma.module';
 import { MailService, mailService } from './mail/mail.service';
 import { Module } from '@nestjs/common';
 import { UserController } from './user/user.controller';
@@ -8,7 +7,6 @@ import { UserRepository } from './user-repository/user-repository';
 import { ConfigService } from '@nestjs/config';
 
 @Module({
-  imports: [PrismaModule],
   controllers: [UserController],
   providers: [
     UserService,
