@@ -1,7 +1,14 @@
+import {
+  loginUserRequestValidation,
+  LoginUserRequest,
+} from './../../model/login.model';
+import { ValidationPipe } from './../../validation/validation.pipe';
+import { ValidationFilter } from './../../validation/validation.filter';
 import { UserRepository } from './../user-repository/user-repository';
 import { MailService } from './../mail/mail.service';
 import { Connection } from './../connection/connection';
 import {
+  Body,
   Controller,
   Get,
   Header,
@@ -10,10 +17,13 @@ import {
   HttpStatus,
   Inject,
   Param,
+  ParseIntPipe,
   Post,
   Query,
   Req,
   Res,
+  UseFilters,
+  UsePipes,
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { UserService } from './user.service';
@@ -32,6 +42,15 @@ export class UserController {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {
     this.logger.info('Create User Controller');
+  }
+
+  @UsePipes(new ValidationPipe(loginUserRequestValidation))
+  @UseFilters(ValidationFilter)
+  @Post('login')
+  login(@Query('name') name: string, @Body() request: LoginUserRequest) {
+    console.log(name);
+
+    return `Hello ${request.username}`;
   }
 
   @Get('/connection')
@@ -87,7 +106,9 @@ export class UserController {
   }
 
   @Get(':id')
-  getById(@Param('id') id: string): string {
+  getById(@Param('id', ParseIntPipe) id: number): string {
+    console.info(id * 10);
+
     return `ini adalah method get dengan id ${id}`;
   }
 
