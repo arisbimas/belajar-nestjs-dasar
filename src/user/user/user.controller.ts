@@ -6,6 +6,8 @@ import {
   Get,
   Header,
   HttpCode,
+  HttpException,
+  HttpStatus,
   Inject,
   Param,
   Post,
@@ -44,6 +46,16 @@ export class UserController {
     @Query('first_name') firstName: string,
     @Query('last_name') lastName: string,
   ): Promise<User> {
+    if (!firstName) {
+      throw new HttpException(
+        {
+          code: 400,
+          errors: 'First name is required',
+        },
+        HttpStatus.BAD_REQUEST,
+      );
+    }
+
     this.logger.info(
       `Create user with first name: ${firstName} and last name: ${lastName}`,
     );
@@ -51,6 +63,7 @@ export class UserController {
   }
 
   @Get('/hello')
+  // @UseFilters(ValidationFilter)
   sayHello(@Query('name') name: string): string {
     return this.userService.sayHello(name);
   }

@@ -1,3 +1,4 @@
+import { ValidationFilter } from './validation/validation.filter';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import cookieParser from 'cookie-parser';
@@ -12,6 +13,7 @@ async function bootstrap() {
   app.useLogger(loggerService);
 
   const configService = app.get(ConfigService);
+  app.useGlobalFilters(new ValidationFilter());
   await app.listen(configService.get('PORT') ?? 3000);
 }
 bootstrap();
