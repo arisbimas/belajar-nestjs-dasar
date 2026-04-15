@@ -51,7 +51,7 @@ export class UserController {
   }
 
   @Get('/hello')
-  sayHello(@Query('name') name: string): Promise<string> {
+  sayHello(@Query('name') name: string): string {
     return this.userService.sayHello(name);
   }
 
