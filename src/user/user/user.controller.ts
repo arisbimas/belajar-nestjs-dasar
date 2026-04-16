@@ -1,3 +1,4 @@
+import { Auth } from './../../auth/auth.decorator';
 import { TimeInterceptor } from './../../time/time.interceptor';
 import {
   loginUserRequestValidation,
@@ -29,7 +30,7 @@ import {
 } from '@nestjs/common';
 import type { Request, Response } from 'express';
 import { UserService } from './user.service';
-import { User } from 'generated/prisma/client';
+import type { User } from 'generated/prisma/client';
 import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 
@@ -44,6 +45,13 @@ export class UserController {
     @Inject(WINSTON_MODULE_PROVIDER) private logger: Logger,
   ) {
     this.logger.info('Create User Controller');
+  }
+
+  @Get('/current')
+  getCurrentUser(@Auth() user: User): Record<string, string> {
+    return {
+      data: `Hello ${user.first_name} ${user.last_name}`,
+    };
   }
 
   @UsePipes(new ValidationPipe(loginUserRequestValidation))
