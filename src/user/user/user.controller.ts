@@ -5,7 +5,6 @@ import {
   LoginUserRequest,
 } from './../../model/login.model';
 import { ValidationPipe } from './../../validation/validation.pipe';
-import { ValidationFilter } from './../../validation/validation.filter';
 import { UserRepository } from './../user-repository/user-repository';
 import { MailService } from './../mail/mail.service';
 import { Connection } from './../connection/connection';
@@ -24,7 +23,7 @@ import {
   Query,
   Req,
   Res,
-  UseFilters,
+  UseGuards,
   UseInterceptors,
   UsePipes,
 } from '@nestjs/common';
@@ -33,6 +32,7 @@ import { UserService } from './user.service';
 import type { User } from 'generated/prisma/client';
 import { Logger } from 'winston';
 import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
+import { RoleGuard } from 'src/role/role.guard';
 
 @Controller('/api/users')
 export class UserController {
@@ -48,6 +48,7 @@ export class UserController {
   }
 
   @Get('/current')
+  @UseGuards(new RoleGuard(['admin']))
   getCurrentUser(@Auth() user: User): Record<string, string> {
     return {
       data: `Hello ${user.first_name} ${user.last_name}`,
@@ -55,7 +56,7 @@ export class UserController {
   }
 
   @UsePipes(new ValidationPipe(loginUserRequestValidation))
-  @UseFilters(ValidationFilter)
+  // @UseFilters(ValidationFilter)
   @Post('login')
   @Header('Content-Type', 'application/json')
   @UseInterceptors(TimeInterceptor)
