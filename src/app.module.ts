@@ -1,3 +1,4 @@
+import { RoleGuard } from 'src/role/role.guard';
 import { AuthMiddleware } from './auth/auth.middleware';
 import { LogMiddleware } from './log/log.middleware';
 import {
@@ -14,6 +15,7 @@ import { PrismaModule } from './prisma/prisma.module';
 import { WinstonModule } from 'nest-winston';
 import { ValidationModule } from './validation/validation.module';
 import * as winston from 'winston';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -33,7 +35,13 @@ import * as winston from 'winston';
     ValidationModule.forRoot(true),
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [
+    AppService,
+    {
+      provide: APP_GUARD,
+      useClass: RoleGuard,
+    },
+  ],
 })
 export class AppModule implements NestModule {
   configure(consumer: MiddlewareConsumer) {

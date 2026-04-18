@@ -35,6 +35,7 @@ import { WINSTON_MODULE_PROVIDER } from 'nest-winston';
 import { RoleGuard } from 'src/role/role.guard';
 
 @Controller('/api/users')
+@UseGuards(RoleGuard)
 export class UserController {
   constructor(
     private userService: UserService,
@@ -48,7 +49,6 @@ export class UserController {
   }
 
   @Get('/current')
-  @UseGuards(new RoleGuard(['admin']))
   getCurrentUser(@Auth() user: User): Record<string, string> {
     return {
       data: `Hello ${user.first_name} ${user.last_name}`,
